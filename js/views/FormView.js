@@ -11,7 +11,7 @@ class FormView {
             <input type="text" value="${this.item ? this.item.description : ""}" class="form-control" id="url" aria-describedby="urlHelp">
             <div id="urlHelp" class="form-text">Aquela URL muito grande</div>
             </div>
-            <button type="submit" class="btn btn-primary">Salvar</button>
+            <button id="salvar" type="submit" class="btn btn-primary">Salvar</button>
         </form>
         `
     }

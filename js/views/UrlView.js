@@ -4,9 +4,16 @@ class UrlView {
     }
 
     render() {
-        let components = this.listaLinks.map((item) => {
-            return new UrlItemComponent(item).render();
-        })
+        let components = [];
+        for(let i = 0; i < this.listaLinks.length; i ++) {
+            let item = this.listaLinks[i];
+            components.push(new UrlItemComponent(item).render());
+        }
+        console.log(components);
+
+        //let components = this.listaLinks.map((item) => {
+        //    return new UrlItemComponent(item).render();
+        //})
 
         return `
             <h1>Meus links</h1>
