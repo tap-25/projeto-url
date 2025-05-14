@@ -10,8 +10,16 @@ class UrlController {
         let request = await fetch(url);
         let json = await request.json();
 
-        let view = new UrlView(json.data);
+        let view = new UrlView(json.data, this.deleteURL);
         this.container.innerHTML = view.render();
+
+        let btnsDelete = document.querySelectorAll(".btn-delete");
+        for(let i = 0; i < btnsDelete.length; i ++) {
+            let btnDelete = btnsDelete[i];
+            btnDelete.addEventListener("click", (e) => {
+                this.deleteURL(e.target.dataset.alias, e.target.dataset.domain);
+            })
+        }
     }
 
     bind() {
@@ -29,10 +37,19 @@ class UrlController {
         })
     }
 
-    async deleteURL(item) {
-        let requestUrl = `https://api.tinyurl.com/alias/${item.domain}/${item.alias}?api_token=AQwCV1uSA08NxL4Zt31wVZCwD0Sivk9wMUk4l4sP8mZJQtsK0A0IXDGyfKZt`
+    async deleteURL(alias, domain) {
+        let requestUrl = `https://api.tinyurl.com/archive?api_token=AQwCV1uSA08NxL4Zt31wVZCwD0Sivk9wMUk4l4sP8mZJQtsK0A0IXDGyfKZt`
+        let body = {
+            domain: domain,
+            alias: alias
+        };
         await fetch(requestUrl, {
-            method: "DELETE",
+            method: "PATCH",
+            headers: {
+                "content-type": "application/json"
+            },
+            body: JSON.stringify(body),
+
         });
         this.init();
     }

@@ -10,7 +10,7 @@ class UrlItemComponent {
             <td>${this.item.tiny_url}</td>
             <td>
                 <button class="btn btn-light">Edit</button>
-                <button class="btn btn-danger">Delete</button>
+                <button data-domain="${this.item.domain}" data-alias="${this.item.alias}" class="btn-delete btn btn-danger">Delete</button>
             </td>
         </tr>
         ` 
