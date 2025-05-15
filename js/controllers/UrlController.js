@@ -5,25 +5,21 @@ class UrlController {
         this.bind();
     }
 
+    get(id) {
+        return document.querySelector(id);
+    }
+
     async init() {
         let url = "https://api.tinyurl.com/urls/available?api_token=AQwCV1uSA08NxL4Zt31wVZCwD0Sivk9wMUk4l4sP8mZJQtsK0A0IXDGyfKZt"
         let request = await fetch(url);
         let json = await request.json();
 
-        let view = new UrlView(json.data, this.deleteURL);
+        let view = new UrlView(json.data);
         this.container.innerHTML = view.render();
-
-        let btnsDelete = document.querySelectorAll(".btn-delete");
-        for(let i = 0; i < btnsDelete.length; i ++) {
-            let btnDelete = btnsDelete[i];
-            btnDelete.addEventListener("click", (e) => {
-                this.deleteURL(e.target.dataset.alias, e.target.dataset.domain);
-            })
-        }
     }
 
     bind() {
-        document.querySelector("#new").addEventListener("click", () => {
+        this.get("#new").addEventListener("click", () => {
             this.showForm();
         })
     }
@@ -31,43 +27,26 @@ class UrlController {
     showForm() {
         let view = new FormView();
         this.container.innerHTML = view.render();
-        document.querySelector("#salvar").addEventListener("click", (e) => {
+        this.get("#salvar").addEventListener("click", (e) => {
             e.preventDefault();
-            this.criarUrl();
-        })
-    }
-
-    async deleteURL(alias, domain) {
-        let requestUrl = `https://api.tinyurl.com/archive?api_token=AQwCV1uSA08NxL4Zt31wVZCwD0Sivk9wMUk4l4sP8mZJQtsK0A0IXDGyfKZt`
-        let body = {
-            domain: domain,
-            alias: alias
-        };
-        await fetch(requestUrl, {
-            method: "PATCH",
-            headers: {
-                "content-type": "application/json"
-            },
-            body: JSON.stringify(body),
-
+            this.salvarUrl();
         });
-        this.init();
     }
 
-    async criarUrl() {
-        let url = document.querySelector("#url").value;
+    async salvarUrl() {
+        let urlValue = this.get("#url").value;
+
+        let url = "https://api.tinyurl.com/create?api_token=AQwCV1uSA08NxL4Zt31wVZCwD0Sivk9wMUk4l4sP8mZJQtsK0A0IXDGyfKZt"
         let body = {
-            url: url
+            url: urlValue
         };
-    
-        let requestUrl = "https://api.tinyurl.com/create?api_token=AQwCV1uSA08NxL4Zt31wVZCwD0Sivk9wMUk4l4sP8mZJQtsK0A0IXDGyfKZt"
-        await fetch(requestUrl, {
+        await fetch(url, {
             method: "POST",
+            body: JSON.stringify(body),
             headers: {
                 "content-type": "application/json"
-            },
-            body: JSON.stringify(body)
+            }
         });
-        this.init();
+        this.init();    
     }
 }
