@@ -1,23 +1,23 @@
 class UrlController {
     constructor(){
         this.container = document.querySelector("#app");
+        this.repository = new UrlRepository();
         this.init();
         this.bind();
     }
 
     async init() {
-        let url = "https://api.tinyurl.com/urls/available?api_token=xr8jNjp1wMk9WhvxqJs0oEaTceECDlTgbSFUdqaO1x4oVC31h4Nkc0F9aaD0"
-        let request = await fetch(url);
-        let json = await request.json();
+        let urls = await this.repository.getAll();
 
-        let view = new UrlView(json.data, this.deleteURL);
+        let view = new UrlView(urls);
         this.container.innerHTML = view.render();
 
         let btnsDelete = document.querySelectorAll(".btn-delete");
         for(let i = 0; i < btnsDelete.length; i ++) {
             let btnDelete = btnsDelete[i];
-            btnDelete.addEventListener("click", (e) => {
-                this.deleteURL(e.target.dataset.alias, e.target.dataset.domain);
+            btnDelete.addEventListener("click", async (e) => {
+                await this.repository.deleta(e.target.dataset.alias, e.target.dataset.domain);
+                this.init();
             })
         }
 
@@ -39,58 +39,24 @@ class UrlController {
     showForm() {
         let view = new FormView();
         this.container.innerHTML = view.render();
-        document.querySelector("#salvar").addEventListener("click", (e) => {
+        document.querySelector("#salvar").addEventListener("click", async (e) => {
             e.preventDefault();
-            this.criarUrl();
+            let url = document.querySelector("#url").value;
+            await this.repository.criar(url);
+            this.init();
         })
-    }
-
-    async deleteURL(alias, domain) {
-        let requestUrl = `https://api.tinyurl.com/archive?api_token=xr8jNjp1wMk9WhvxqJs0oEaTceECDlTgbSFUdqaO1x4oVC31h4Nkc0F9aaD0`
-        let body = {
-            domain: domain,
-            alias: alias
-        };
-        await fetch(requestUrl, {
-            method: "PATCH",
-            headers: {
-                "content-type": "application/json"
-            },
-            body: JSON.stringify(body),
-
-        });
-        this.init();
     }
 
     async editURL(alias, domain) {
-        let requestUrl = `https://api.tinyurl.com/alias/${domain}/${alias}?api_token=xr8jNjp1wMk9WhvxqJs0oEaTceECDlTgbSFUdqaO1x4oVC31h4Nkc0F9aaD0`
-        let response = await fetch(requestUrl);
-        let url = await response.json();
+        let url = await this.repository.get(domain, alias);
         
-        let view = new FormView(url.data);
+        let view = new FormView(url);
         this.container.innerHTML = view.render();
-        document.querySelector("#salvar").addEventListener("click", (e) => {
+        document.querySelector("#salvar").addEventListener("click", async (e) => {
             e.preventDefault();
-            console.log("Tenho que atualizar!!!!");
+            let url = document.querySelector("#url").value;
+            await this.repository.atualiza(domain, alias, url);
+            this.init();
         })
-
-
-    }
-
-    async criarUrl() {
-        let url = document.querySelector("#url").value;
-        let body = {
-            url: url
-        };
-    
-        let requestUrl = "https://api.tinyurl.com/create?api_token=xr8jNjp1wMk9WhvxqJs0oEaTceECDlTgbSFUdqaO1x4oVC31h4Nkc0F9aaD0"
-        await fetch(requestUrl, {
-            method: "POST",
-            headers: {
-                "content-type": "application/json"
-            },
-            body: JSON.stringify(body)
-        });
-        this.init();
     }
 }
