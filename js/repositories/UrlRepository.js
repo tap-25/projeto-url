@@ -1,75 +1,51 @@
-class UrlRepository {
+class URLRepository {
+    constructor() {
+        this.baseUrl = "https://api.tinyurl.com/";
+        this.token = "xr8jNjp1wMk9WhvxqJs0oEaTceECDlTgbSFUdqaO1x4oVC31h4Nkc0F9aaD0";
+    }
+
+    getAction(endpoint) {
+        return `${this.baseUrl}${endpoint}?api_token=${this.token}`
+    }
+
     getAll() {
         return new Promise(async (resolve) => {
-            let url = "https://api.tinyurl.com/urls/available?api_token=xr8jNjp1wMk9WhvxqJs0oEaTceECDlTgbSFUdqaO1x4oVC31h4Nkc0F9aaD0"
-            let request = await fetch(url);
+            let request = await fetch(this.getAction("urls/available"));
             let json = await request.json();
             resolve(json.data);
-        });
-    }
-
-    get(domain, alias) {
-        return new Promise(async (resolve) => {
-            let requestUrl = `https://api.tinyurl.com/alias/${domain}/${alias}?api_token=xr8jNjp1wMk9WhvxqJs0oEaTceECDlTgbSFUdqaO1x4oVC31h4Nkc0F9aaD0`
-            let response = await fetch(requestUrl);
-            let json = await response.json();
-            resolve(json.data);
         })
     }
 
-    criar(url) {
-        return new Promise(async (resolve) => {
-            let body = {
-                url: url
-            };
-        
-            let requestUrl = "https://api.tinyurl.com/create?api_token=xr8jNjp1wMk9WhvxqJs0oEaTceECDlTgbSFUdqaO1x4oVC31h4Nkc0F9aaD0"
-            await fetch(requestUrl, {
-                method: "POST",
-                headers: {
-                    "content-type": "application/json"
-                },
-                body: JSON.stringify(body)
-            });
-            resolve();
-        })
+   
+
+    get(id) {
+       
     }
 
-    atualiza(domain, alias, url) {
+    update(domain, alias, url) {
         return new Promise(async (resolve) => {
-            let body = {
+             let body = {
                 url: url,
-                alias: alias,
-                domain: domain
-            };
-        
-            let requestUrl = "https://api.tinyurl.com/update?api_token=xr8jNjp1wMk9WhvxqJs0oEaTceECDlTgbSFUdqaO1x4oVC31h4Nkc0F9aaD0"
-            await fetch(requestUrl, {
-                method: "PATCH",
-                headers: {
-                    "content-type": "application/json"
-                },
-                body: JSON.stringify(body)
-            });
-            resolve()
-        })
-    }
-
-    deleta(domain, alias) {
-        return new Promise(async (resolve) => {
-            let requestUrl = `https://api.tinyurl.com/archive?api_token=xr8jNjp1wMk9WhvxqJs0oEaTceECDlTgbSFUdqaO1x4oVC31h4Nkc0F9aaD0`
-            let body = {
                 domain: domain,
                 alias: alias
-            };
-            await fetch(requestUrl, {
+             }
+             await fetch(this.getAction("update", {
                 method: "PATCH",
                 headers: {
-                    "content-type": "application/json"
+                    "content-type": "Application/json"
                 },
-                body: JSON.stringify(body),
-            });
-            resolve();
+                body: JSON.stringify(body)
+             }));
+             resolve();
         })
+        
+    }
+
+    create() {
+
+    } 
+
+    deletar() {
+
     }
 }
