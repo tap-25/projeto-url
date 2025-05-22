@@ -6,13 +6,8 @@ class UrlController {
         this.bind();
     }
 
-    callbackGetAll(dados) {
-        
-    }
-
-
     async init() {
-        let dados = await this.repository.getAllPromessa();
+        let dados = await this.repository.getAll();
 
         let view = new UrlView(dados, this.deleteURL);
         this.container.innerHTML = view.render();
